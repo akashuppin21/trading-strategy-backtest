@@ -27,7 +27,7 @@ This is a **contrarian intraday trading system** that uses Daily OHLC data to id
 
 **Entry Execution (9:17 AM onwards):**
 - **For SHORT trades:** Monitor stocks where (Low - Open) > 0.3%
-- **For LONG trades:** Monitor stocks where (Open - Low) > 2%
+- **For LONG trades:** Monitor stocks where (Open - High) > 0.3%
 - Place limit orders at entry levels:
   - SHORT: 2% above Open
   - LONG: 2% below Open
@@ -154,12 +154,12 @@ This is a **contrarian intraday trading system** that uses Daily OHLC data to id
 Traditional backtests can't verify if High/Low levels were actually achievable intraday. This strategy solves that:
 
 **For SHORT Trades:**
-1. At 9:17 AM, check: `(Low - Open) / Open > 0.3%`
+1. At 9:17 AM, check: `(Open - Low) / Open > 0.3%`
 2. If true, place limit order at `Open + 2%`
 3. Monitor until filled or day end
 
 **For LONG Trades:**
-1. Check: `(Open - Low) / Open > 2%`
+1. Check: `(High - Open) / Open > 0.3%`
 2. If true, place limit order at `Open - 2%`
 3. Monitor until filled or day end
 
@@ -247,7 +247,6 @@ trading-strategy-backtest/
 
 **Important:**
 - This is for educational and demonstration purposes only
-- Past performance does not guarantee future results
 - Trading involves substantial risk of loss
 - Always do your own research before investing
 - The author is not responsible for any financial losses
@@ -256,7 +255,6 @@ trading-strategy-backtest/
 
 - **Email:** [Your Email]
 - **LinkedIn:** [Your LinkedIn Profile]
-- **Portfolio:** [Your Website if any]
 
 ---
 
