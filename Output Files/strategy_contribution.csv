@@ -1,0 +1,3 @@
+Strategy,Direction,Trading_Days,Total_Profit_%,Avg_Daily_Profit_%
+S1_Support_Bounce,SHORT,1909,3669.19,0.3899
+S1_Resistance_Rejection,LONG,1900,3017.45,0.3369
