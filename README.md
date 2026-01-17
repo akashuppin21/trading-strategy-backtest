@@ -84,6 +84,23 @@ This is a **contrarian intraday trading system** that uses Daily OHLC data to id
 
 **Key Finding:** SHORT strategies slightly outperform LONG strategies (3,669% vs 3,017% total profit)
 
+## 📊 Visual Performance Analysis
+
+### Equity Curve - Capital Growth
+![Equity Curve](equity_curve.png)
+
+### Yearly Returns
+![Yearly Returns](yearly_returns.png)
+
+### Strategy Performance Comparison
+![Strategy Comparison](strategy_comparison.png)
+
+### Drawdown Analysis
+![Drawdown Chart](drawdown_chart.png)
+
+### Monthly Returns Heatmap
+![Monthly Returns](monthly_returns_heatmap.png)
+
 ## 🔬 Rigorous Backtesting Approach
 
 ### Multiple Testing Methods
