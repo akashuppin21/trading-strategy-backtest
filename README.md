@@ -107,7 +107,7 @@ This is a **contrarian intraday trading system** that uses Daily OHLC data to id
 
 **Risk Management Benefits:**
 - **Diversification:** Reduces single-stock risk
-- **Lower Drawdown:** Max DD reduced from -15% to -11%
+- **Lower Drawdown:** Max DD reduced from -22% to -11%
 - **Better Accuracy:** Win rate improved from ~55% to 63%
 - **Balanced Exposure:** Equal long/short positions hedge market risk
 
