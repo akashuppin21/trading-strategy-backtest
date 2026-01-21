@@ -47,6 +47,113 @@ This is a **contrarian intraday trading system** that uses Daily OHLC data to id
 - Identifies when price touches support and bounces
 - Enter SHORT when market gaps up after bounce (overbought reversal)
 
+## 🛡️ Risk Management & Live Execution
+
+### Real-Time Risk Controls
+
+The strategy employs **4 critical monitoring systems** that run continuously during market hours to protect capital and optimize execution:
+
+#### 1. Daily Loss Limit Monitor
+**File:** `daily_loss_limit.py` *(Not in GitHub - Proprietary)*
+
+**Function:** Real-time P&L tracking with circuit breaker
+- Monitors aggregate daily P&L across all positions
+- **Trigger:** If daily loss exceeds **2% of total capital**
+- **Action:** Immediately liquidates ALL positions (both long and short)
+- **Purpose:** Prevents catastrophic drawdown on volatile days
+
+**Example:** With ₹10,00,000 capital, if loss reaches ₹20,000 → Auto-exit everything
+
+#### 2. Long Trades Monitor
+**File:** `long_trades_monitor.py` *(Not in GitHub - Proprietary)*
+
+**Function:** Individual position risk management for long trades
+- **Level 1 Alert:** If any long position moves **±4%**
+  - Action: Close **50% of that position**
+- **Level 2 Alert:** If any long position moves **±8%**
+  - Action: Close **100% of that position**
+- Protects against both adverse moves (stop-loss) and captures profits on winners
+
+**Logic:** Partial exits at 4% allow the position to continue if momentum persists, while 8% is the hard exit
+
+#### 3. Short Trades Monitor
+**File:** `short_trades_monitor.py` *(Not in GitHub - Proprietary)*
+
+**Function:** Individual position risk management for short trades
+- **Level 1 Alert:** If any short position moves **±4%**
+  - Action: Close **50% of that position**
+- **Level 2 Alert:** If any short position moves **±8%**
+  - Action: Close **100% of that position**
+- Same logic as long trades but applied to short positions separately
+
+**Note:** Separate files for long and short allow independent monitoring and quicker execution
+
+#### 4. Order Fill Manager
+**File:** `order_fill_manager.py` *(Not in GitHub - Proprietary)*
+
+**Function:** Smart order cancellation to prevent over-exposure
+- **Scenario:** System places ~20 orders (10 long + 10 short) at market open
+- **Monitoring:** Continuously checks filled positions
+- **Trigger:** Once **5 long positions** are filled
+  - Action: **Cancel all remaining unfilled long orders**
+- **Trigger:** Once **5 short positions** are filled
+  - Action: **Cancel all remaining unfilled short orders**
+- **Purpose:** Maintains exactly 5+5 position balance, prevents accidental over-trading
+
+**Why This Matters:** Ensures consistent position sizing and prevents the system from entering 15-20 trades if market is highly volatile
+
+### Why These Files Are Not on GitHub
+
+These proprietary risk management systems represent **years of real-money trading experience** and contain:
+- Zerodha API credentials and authentication logic
+- Custom position tracking algorithms
+- Real-time data processing techniques
+- Execution optimization strategies
+- Personal risk tolerance parameters
+
+**Security & Competitive Advantage:** These systems are the operational backbone that makes the strategy viable in live markets. They're not shared publicly to:
+1. Protect API security
+2. Maintain competitive edge
+3. Prevent misuse by inexperienced traders
+
+### Live Execution Workflow
+
+```
+09:00 AM → Signal Generation
+        ↓
+09:15 AM → Market Opens
+        ↓
+09:17 AM → Place ~20 Limit Orders (10 Long + 10 Short)
+        ↓
+        ├→ Order Fill Manager: Monitors filled positions
+        │  └→ Cancel excess orders once 5+5 filled
+        ↓
+        ├→ Long Trades Monitor: Checks each long position
+        │  ├→ ±4% move? Exit 50%
+        │  └→ ±8% move? Exit 100%
+        ↓
+        ├→ Short Trades Monitor: Checks each short position
+        │  ├→ ±4% move? Exit 50%
+        │  └→ ±8% move? Exit 100%
+        ↓
+        └→ Daily Loss Limit: Monitors total P&L
+           └→ Loss > 2%? Liquidate everything
+        ↓
+03:15 PM → Auto-close all remaining positions
+        ↓
+03:30 PM → Generate daily report
+```
+
+### Risk Management Philosophy
+
+**Layered Defense System:**
+1. **Position Level:** Individual stock monitoring (±4%/±8% exits)
+2. **Strategy Level:** Balanced 5+5 long/short exposure
+3. **Portfolio Level:** 2% daily loss limit
+4. **Time Level:** Intraday only (no overnight risk)
+
+**Capital Preservation First:** The 2% daily loss limit ensures that even in the worst-case scenario, you can't lose more than 2% on any single day. Over 100 trading days, you'd need 50 consecutive max-loss days to blow up the account (statistically impossible with 63% win rate).
+
 ## 📊 Backtest Results (2018-2025)
 
 ### 7-Year Performance Summary
@@ -191,11 +298,11 @@ Traditional backtests can't verify if High/Low levels were actually achievable i
 ✅ **Real-time Stock Screening** across entire NSE universe  
 ✅ **Signal Strength Ranking** for optimal trade selection  
 ✅ **Transaction Costs Included** (0.25% slippage + tax)  
-✅ **Risk Management** with position limits  
+✅ **Multi-Layered Risk Management** (4 monitoring systems)  
 ✅ **Daily Rebalancing** - no overnight risk  
 ✅ **Backtested Across Multiple Methods** to avoid overfitting  
 
-## 📈 Risk Management
+## 📈 Risk Management Summary
 
 ### Position Sizing
 - Maximum 10 trades per day (5 LONG + 5 SHORT)
@@ -206,12 +313,14 @@ Traditional backtests can't verify if High/Low levels were actually achievable i
 - **Max Drawdown:** -11.44%
 - **Sharpe Ratio:** 4.99 (excellent risk-adjusted returns)
 - **Win Rate:** 63.62%
-- **Risk per Trade:** Limited by position size
+- **Daily Loss Limit:** 2% of capital (hard stop)
+- **Position Exit Triggers:** ±4% (50% exit), ±8% (100% exit)
 
 ### Stop Loss & Exits
 - All positions closed by 3:15 PM (no overnight risk)
 - Intraday monitoring with automated exit at close
 - Risk of gap-ups/gap-downs eliminated
+- Real-time position monitoring via 4 proprietary systems
 
 ## 🚀 Why This Strategy Works
 
@@ -220,19 +329,26 @@ Traditional backtests can't verify if High/Low levels were actually achievable i
 3. **Market Structure:** Indian markets show strong mean reversion intraday
 4. **Execution Edge:** Automated system removes emotional decisions
 5. **Diversification:** Multiple stocks + both directions = lower risk
+6. **Risk Controls:** 4-layer monitoring system prevents catastrophic losses
 
 ## 📁 Project Structure
 ```
 trading-strategy-backtest/
 │
-├── main.py                    # Main backtesting script
-├── README.md                  # This file
+├── main.py                         # Main backtesting script
+├── README.md                       # This file
 │
-└── daily_trades_output/       # Results folder
-    ├── capital_growth.csv
-    ├── yearly_performance.csv
-    ├── strategy_summary.csv
-    └── [other result files]
+├── daily_trades_output/            # Results folder
+│   ├── capital_growth.csv
+│   ├── yearly_performance.csv
+│   ├── strategy_summary.csv
+│   └── [other result files]
+│
+└── live_execution/                 # NOT IN GITHUB (Proprietary)
+    ├── daily_loss_limit.py         # 2% daily loss circuit breaker
+    ├── long_trades_monitor.py      # Individual long position risk manager
+    ├── short_trades_monitor.py     # Individual short position risk manager
+    └── order_fill_manager.py       # Smart order cancellation system
 ```
 
 ## 🎓 Background
@@ -250,6 +366,7 @@ trading-strategy-backtest/
 - Risk management implementation
 - Production-ready code architecture
 - Real-world market knowledge
+- Live trading execution systems
 
 ## 🔮 Future Enhancements
 
@@ -266,7 +383,9 @@ trading-strategy-backtest/
 - This is for educational and demonstration purposes only
 - Trading involves substantial risk of loss
 - Always do your own research before investing
+- Past performance does not guarantee future results
 - The author is not responsible for any financial losses
+- Risk management systems are proprietary and not included in this repository
 
 ## 📫 Contact
 
